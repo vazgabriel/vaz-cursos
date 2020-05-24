@@ -13,7 +13,7 @@ class TabPage extends StatefulWidget {
 
 class _TabPageState extends State<TabPage> {
   var _currentIndex = 0;
-  var _children = [
+  final _children = [
     HomePage(),
     CoursesPage(),
     ProfilePage(),
@@ -31,16 +31,13 @@ class _TabPageState extends State<TabPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Vaz Cursos',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Vaz Cursos'),
       ),
       body: _children[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onTap,
         currentIndex: _currentIndex,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             title: Text('Início'),
@@ -58,28 +55,3 @@ class _TabPageState extends State<TabPage> {
     );
   }
 }
-
-// Widget build(BuildContext context) {
-//   return Scaffold(
-//     appBar: AppBar(
-//       title: Text('My Flutter App'),
-//     ),
-//     body: _children[_currentIndex], // new
-//     bottomNavigationBar: BottomNavigationBar(
-//       onTap: onTabTapped, // new
-//       currentIndex: _currentIndex, // new
-//       items: [
-//         new BottomNavigationBarItem(
-//           icon: Icon(Icons.home),
-//           title: Text('Home'),
-//         ),
-//         new BottomNavigationBarItem(
-//           icon: Icon(Icons.mail),
-//           title: Text('Messages'),
-//         ),
-//         new BottomNavigationBarItem(
-//             icon: Icon(Icons.person), title: Text('Profile'))
-//       ],
-//     ),
-//   );
-// }

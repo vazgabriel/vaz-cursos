@@ -19,9 +19,9 @@ class CachedImage extends StatelessWidget {
           : null,
       progressIndicatorBuilder: (context, url, downloadProgress) =>
           CircularProgressIndicator(value: downloadProgress.progress),
-      errorWidget: (context, url, error) => Icon(Icons.error),
+      errorWidget: (context, url, error) => const Icon(Icons.error),
       fadeInCurve: Curves.easeIn,
-      fadeInDuration: Duration(seconds: 1),
+      fadeInDuration: const Duration(seconds: 1),
     );
   }
 }

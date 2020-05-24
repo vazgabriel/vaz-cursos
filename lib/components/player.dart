@@ -8,7 +8,7 @@ class Player extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    YoutubePlayerController _controller = YoutubePlayerController(
+    final YoutubePlayerController _controller = YoutubePlayerController(
       initialVideoId: youtubeId,
     );
 
