@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:vaz_cursos/components/detail_course_info.dart';
+import 'package:vaz_cursos/components/detail_course/info.dart';
 import 'package:vaz_cursos/mock/courses.dart';
 import 'package:vaz_cursos/models/course.dart';
 
