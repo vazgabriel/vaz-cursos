@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:dio/dio.dart';
 
 import 'package:vaz_cursos/pages/courses.dart';
 import 'package:vaz_cursos/pages/home.dart';
@@ -31,15 +30,6 @@ class _TabPageState extends State<TabPage> {
   @override
   void initState() {
     super.initState();
-    // BaseOptions options = new BaseOptions(
-    //   baseUrl: "http://localhost:3333",
-    // );
-
-    // Dio dio = new Dio(options);
-    // dio.get("/")
-    //   .then((response) {
-    //     print(response.data.toString());
-    //   });
   }
 
   @override
