@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
 
 import 'package:vaz_cursos/api.dart';
+import 'package:vaz_cursos/models/auth_user.dart';
+import 'package:vaz_cursos/models/user.dart';
+import 'package:vaz_cursos/store/user.dart';
 import 'package:vaz_cursos/utils/validations.dart';
 
 class AuthComponent extends StatefulWidget {
@@ -29,7 +33,7 @@ class _AuthComponentState extends State<AuthComponent> {
     );
   }
 
-  void _onPressed() async {
+  void _onPressed(UserStore userStore) async {
     if (_formKey.currentState.validate()) {
       final _url = "/auth/" + (_isLogin ? "login" : "register");
 
@@ -42,8 +46,12 @@ class _AuthComponentState extends State<AuthComponent> {
         }
 
         var response = await api.post(_url, data: _data);
-        _showMessage('Bem vindo ${response.data['user']['name']}');
+        final String token = response.data['token'];
+        final User user = User.fromJson(response.data['user']);
 
+        userStore.setUser(AuthUser(token: token, user: user));
+
+        _showMessage('Bem vindo ${user.name}');
         _formKey.currentState.reset();
       } on DioError catch (e) {
         if (e.response != null) {
@@ -62,6 +70,8 @@ class _AuthComponentState extends State<AuthComponent> {
 
   @override
   Widget build(BuildContext context) {
+    final userStore = Provider.of<UserStore>(context);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
@@ -70,10 +80,14 @@ class _AuthComponentState extends State<AuthComponent> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              widget.instructions != null ? widget.instructions : 'Bem vindo ao Vaz Cursos',
+              widget.instructions != null
+                  ? widget.instructions
+                  : 'Bem vindo ao Vaz Cursos',
               style: Theme.of(context).textTheme.headline6,
             ),
-            SizedBox(height: 16.0,),
+            SizedBox(
+              height: 16.0,
+            ),
             if (!_isLogin)
               TextFormField(
                 textCapitalization: TextCapitalization.words,
@@ -127,7 +141,7 @@ class _AuthComponentState extends State<AuthComponent> {
               child: RaisedButton(
                 color: Theme.of(context).primaryColor,
                 textColor: Colors.white,
-                onPressed: _onPressed,
+                onPressed: () => _onPressed(userStore),
                 child: Text(_isLogin ? 'ENTRAR' : 'REGISTRAR'),
               ),
             ),

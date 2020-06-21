@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 
 BaseOptions options = new BaseOptions(
-  baseUrl: "https://vaz-cursos.herokuapp.com",
+  baseUrl: "http://localhost:3333",
 );
 
 Dio api = new Dio(options);

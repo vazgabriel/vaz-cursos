@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
+
 class User {
   int id;
   String name;
   String email;
   String profileImage;
-  DateTime createdAt;
+  String createdAt;
   String shortDescription;
   String description;
   double rate;
@@ -12,11 +14,11 @@ class User {
   int courses;
 
   User({
-    this.id,
-    this.name,
-    this.email,
+    @required this.id,
+    @required this.name,
+    @required this.email,
+    @required this.createdAt,
     this.profileImage,
-    this.createdAt,
     this.shortDescription,
     this.description,
     this.rate,
@@ -24,4 +26,24 @@ class User {
     this.students,
     this.courses,
   });
+
+  factory User.fromJson(Map<String, dynamic> userJSON) {
+    return User(
+      id: userJSON['id'],
+      name: userJSON['name'],
+      email: userJSON['email'],
+      createdAt: userJSON['created_at'],
+      profileImage: userJSON['profile_image'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': this.id,
+      'name': this.name,
+      'email': this.email,
+      'created_at': this.createdAt,
+      'profile_image': this.profileImage,
+    };
+  }
 }

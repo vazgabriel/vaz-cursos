@@ -9,7 +9,7 @@ var gabriel = User(
   email: 'gabrielcvaz@outlook.com',
   profileImage:
       'https://yt3.ggpht.com/a/AATXAJyeErG_4q7sOv61ADDdQOUROxCaoMAESLEB8A=s176-c-k-c0xffffffff-no-rj-mo',
-  createdAt: DateTime.now(),
+  createdAt: '2020-06-21 15:40:11',
   shortDescription: 'Software Engineer a mais de 3 anos',
   description: 'Software Engineer a mais de 3 anos, ...',
   rate: 4.78,
