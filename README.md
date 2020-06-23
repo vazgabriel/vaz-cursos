@@ -1,16 +1,16 @@
-# vaz_cursos
+# Vaz Cursos
 
-Plataforma dos cursos do Vaz
+Course platform made with Flutter.
+
+Plataforma de cursos criada com Flutter.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
+For configuring and running the app, access the oficial Flutter
 [online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+Para configurar e executar o aplicativo, acesse a
+[documentação oficial](https://flutter.dev/docs) do Flutter, que
+oferece tutoriais, exemplos, guías de desenvolvimento móvil, e
+a referencia completa da API.
