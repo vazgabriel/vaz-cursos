@@ -15,7 +15,7 @@ class ProfilePage extends StatelessWidget {
 
     return Observer(
       builder: (_) => userStore.user != null
-          ? ProfileInfo()
+          ? ProfileInfo(user: userStore.user.user)
           : AuthComponent(
               instructions: 'Faça login ou crie sua conta',
             ),

@@ -9,10 +9,16 @@ import 'package:vaz_cursos/store/user.dart';
 import 'package:vaz_cursos/utils/validations.dart';
 
 class AuthComponent extends StatefulWidget {
-  AuthComponent({Key key, this.instructions, this.dialogCtx}) : super(key: key);
+  AuthComponent({
+    Key key,
+    this.instructions,
+    this.dialogCtx,
+    this.onLoginSuccess,
+  }) : super(key: key);
 
   final String instructions;
   final BuildContext dialogCtx;
+  final Function onLoginSuccess;
 
   @override
   _AuthComponentState createState() => _AuthComponentState();
@@ -25,17 +31,28 @@ class _AuthComponentState extends State<AuthComponent> {
   var _email = '';
   var _password = '';
   var _isLogin = true;
+  var _isLoading = false;
+  var _errorMessage = '';
 
   void _showMessage(String message) {
-    Scaffold.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    setState(() {
+      _errorMessage = message;
+    });
+  }
+
+  void _stopLoading() {
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void _onPressed(UserStore userStore) async {
     if (_formKey.currentState.validate()) {
+      setState(() {
+        _errorMessage = '';
+        _isLoading = true;
+      });
+
       final _url = "/auth/" + (_isLogin ? "login" : "register");
 
       try {
@@ -50,15 +67,20 @@ class _AuthComponentState extends State<AuthComponent> {
         final String token = response.data['token'];
         final User user = User.fromJson(response.data['user']);
 
+        _stopLoading();
+
         userStore.setUser(AuthUser(token: token, user: user));
         _formKey.currentState.reset();
 
+        widget.onLoginSuccess?.call();
         if (widget.dialogCtx != null) {
           Navigator.of(widget.dialogCtx).pop();
         } else {
           _showMessage('Bem vindo ${user.name}');
         }
       } on DioError catch (e) {
+        _stopLoading();
+
         if (e.response != null) {
           String errorMessage = e.response.data['errors'][0]['message'];
           _showMessage(errorMessage);
@@ -67,6 +89,8 @@ class _AuthComponentState extends State<AuthComponent> {
               'Ocorreu um erro inesperado, verifique sua conexão com a internet');
         }
       } catch (e) {
+        _stopLoading();
+
         _showMessage(
             'Ocorreu um erro inesperado, verifique sua conexão com a internet');
       }
@@ -85,6 +109,23 @@ class _AuthComponentState extends State<AuthComponent> {
         fontSize: 18.0,
       ),
     );
+
+    final loginButton = _isLoading
+        ? Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : SizedBox(
+            width: double.maxFinite,
+            child: RaisedButton(
+              color: Theme.of(context).primaryColor,
+              textColor: Colors.white,
+              onPressed: _isLoading ? null : () => _onPressed(userStore),
+              child: Text(_isLogin ? 'ENTRAR' : 'REGISTRAR'),
+            ),
+          );
 
     final formItems = [
       Padding(
@@ -139,23 +180,25 @@ class _AuthComponentState extends State<AuthComponent> {
           return null;
         },
       ),
-      SizedBox(
-        width: double.maxFinite,
-        child: RaisedButton(
-          color: Theme.of(context).primaryColor,
-          textColor: Colors.white,
-          onPressed: () => _onPressed(userStore),
-          child: Text(_isLogin ? 'ENTRAR' : 'REGISTRAR'),
+      if (_errorMessage.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            _errorMessage,
+            style: TextStyle(color: Colors.red, fontSize: 14),
+          ),
         ),
-      ),
+      loginButton,
       FlatButton(
         textColor: Theme.of(context).primaryColor,
-        onPressed: () => setState(
-          () {
-            _formKey.currentState.reset();
-            _isLogin = !_isLogin;
-          },
-        ),
+        onPressed: _isLoading
+            ? null
+            : () => setState(
+                  () {
+                    _formKey.currentState.reset();
+                    _isLogin = !_isLogin;
+                  },
+                ),
         child: Text(_isLogin ? 'Criar conta' : 'Já tenho uma conta'),
       )
     ];
@@ -176,9 +219,9 @@ class _AuthComponentState extends State<AuthComponent> {
     }
 
     final form = widget.dialogCtx != null
-        ? Wrap(
-            alignment: WrapAlignment.center,
+        ? ListView(
             children: formItems,
+            shrinkWrap: true,
           )
         : Column(
             mainAxisAlignment: MainAxisAlignment.center,

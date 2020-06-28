@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
-import 'package:vaz_cursos/components/auth.dart';
 
+import 'package:vaz_cursos/components/auth.dart';
 import 'package:vaz_cursos/components/cached_image.dart';
 import 'package:vaz_cursos/components/detail_course/chip_info.dart';
 import 'package:vaz_cursos/components/detail_course/classes_list.dart';
@@ -18,6 +19,22 @@ class DetailCourseInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userStore = Provider.of<UserStore>(context);
+
+    void showAuthDialog() {
+      showDialog(
+        context: context,
+        builder: (dialogCtx) => Dialog(
+          child: AuthComponent(
+            instructions: 'Faça login para inscrever-se no curso',
+            dialogCtx: dialogCtx,
+          ),
+        ),
+      );
+    }
+
+    void subscribeCourse() {
+      print("Inscrever-se");
+    }
 
     return SingleChildScrollView(
       child: Padding(
@@ -44,26 +61,15 @@ class DetailCourseInfo extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8.0),
               child: SizedBox(
                 width: double.infinity,
-                child: RaisedButton(
-                  onPressed: () {
-                    if (userStore.user == null) {
-                      showDialog(
-                        context: context,
-                        builder: (dialogCtx) => Dialog(
-                          child: AuthComponent(
-                            instructions:
-                                'Faça login para inscrever-se no curso',
-                            dialogCtx: dialogCtx,
-                          ),
-                        ),
-                      );
-                      return;
-                    }
-                    print("Inscrito");
-                  },
-                  child: Text('INSCREVER-SE'),
-                  color: Theme.of(context).primaryColor,
-                  textColor: Colors.white,
+                child: Observer(
+                  builder: (_) => RaisedButton(
+                    onPressed: userStore.user == null
+                        ? showAuthDialog
+                        : subscribeCourse,
+                    child: Text('INSCREVER-SE'),
+                    color: Theme.of(context).primaryColor,
+                    textColor: Colors.white,
+                  ),
                 ),
               ),
             ),

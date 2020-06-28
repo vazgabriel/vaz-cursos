@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vaz_cursos/components/app_drawer.dart';
 
 import 'package:vaz_cursos/pages/courses.dart';
 import 'package:vaz_cursos/pages/home.dart';
@@ -39,6 +40,7 @@ class _TabPageState extends State<TabPage> {
         title: const Text('Vaz Cursos'),
       ),
       body: _children[_currentIndex],
+      drawer: AppDrawer(),
       bottomNavigationBar: BottomNavigationBar(
         onTap: _onTap,
         currentIndex: _currentIndex,
