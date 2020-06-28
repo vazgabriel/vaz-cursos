@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 
 import 'package:vaz_cursos/api.dart';
+import 'package:vaz_cursos/components/loading_button.dart';
 import 'package:vaz_cursos/models/auth_user.dart';
 import 'package:vaz_cursos/models/user.dart';
 import 'package:vaz_cursos/store/user.dart';
@@ -69,7 +70,7 @@ class _AuthComponentState extends State<AuthComponent> {
 
         _stopLoading();
 
-        userStore.setUser(AuthUser(token: token, user: user));
+        userStore.setAuthUser(AuthUser(token: token, user: user));
         _formKey.currentState.reset();
 
         widget.onLoginSuccess?.call();
@@ -110,23 +111,6 @@ class _AuthComponentState extends State<AuthComponent> {
       ),
     );
 
-    final loginButton = _isLoading
-        ? Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: CircularProgressIndicator(),
-            ),
-          )
-        : SizedBox(
-            width: double.maxFinite,
-            child: RaisedButton(
-              color: Theme.of(context).primaryColor,
-              textColor: Colors.white,
-              onPressed: _isLoading ? null : () => _onPressed(userStore),
-              child: Text(_isLogin ? 'ENTRAR' : 'REGISTRAR'),
-            ),
-          );
-
     final formItems = [
       Padding(
         padding: const EdgeInsets.symmetric(vertical: 16.0),
@@ -139,7 +123,7 @@ class _AuthComponentState extends State<AuthComponent> {
             _name = value;
           }),
           decoration: const InputDecoration(
-            hintText: 'Nome',
+            labelText: 'Nome',
           ),
           validator: (value) {
             if (value.isEmpty) {
@@ -155,7 +139,7 @@ class _AuthComponentState extends State<AuthComponent> {
           _email = value;
         }),
         decoration: const InputDecoration(
-          hintText: 'Email',
+          labelText: 'Email',
         ),
         validator: (value) {
           if (!validateEmail(value)) {
@@ -171,7 +155,7 @@ class _AuthComponentState extends State<AuthComponent> {
           _password = value;
         }),
         decoration: const InputDecoration(
-          hintText: 'Senha',
+          labelText: 'Senha',
         ),
         validator: (value) {
           if (value.isEmpty || value.length < 6) {
@@ -185,10 +169,17 @@ class _AuthComponentState extends State<AuthComponent> {
           padding: const EdgeInsets.symmetric(vertical: 8.0),
           child: Text(
             _errorMessage,
-            style: TextStyle(color: Colors.red, fontSize: 14),
+            style: const TextStyle(color: Colors.red, fontSize: 14),
           ),
         ),
-      loginButton,
+      LoadingButton(
+        color: Theme.of(context).primaryColor,
+        textColor: Colors.white,
+        onPressed: () => _onPressed(userStore),
+        child: Text(_isLogin ? 'ENTRAR' : 'REGISTRAR'),
+        loading: _isLoading,
+        variant: ButtonVariant.Full,
+      ),
       FlatButton(
         textColor: Theme.of(context).primaryColor,
         onPressed: _isLoading
@@ -218,21 +209,16 @@ class _AuthComponentState extends State<AuthComponent> {
       );
     }
 
-    final form = widget.dialogCtx != null
-        ? ListView(
-            children: formItems,
-            shrinkWrap: true,
-          )
-        : Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: formItems,
-          );
+    final form = ListView(
+      children: formItems,
+      shrinkWrap: true,
+    );
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Form(
         key: _formKey,
-        child: form,
+        child: widget.dialogCtx == null ? Center(child: form) : form,
       ),
     );
   }

@@ -26,8 +26,14 @@ abstract class UserStoreBase with Store {
   }
 
   @action
-  void setUser(AuthUser authUser) {
+  void setAuthUser(AuthUser authUser) {
     this.user = authUser;
+    this._persistUser();
+  }
+
+  @action
+  void setUser(User user) {
+    this.user = AuthUser(token: this.user?.token ?? '', user: user);
     this._persistUser();
   }
 

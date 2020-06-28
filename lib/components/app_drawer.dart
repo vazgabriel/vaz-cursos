@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:vaz_cursos/components/auth.dart';
+import 'package:vaz_cursos/components/dialogs/edit_password.dart';
+import 'package:vaz_cursos/components/dialogs/edit_profile.dart';
 import 'package:vaz_cursos/components/user_image.dart';
 import 'package:vaz_cursos/models/user.dart';
 
@@ -14,14 +16,32 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final userStore = Provider.of<UserStore>(context);
 
+    void closeDialog() {
+      Navigator.pop(context);
+    }
+
+    void editProfile() {
+      showDialog(
+        context: context,
+        builder: (dialogCtx) => Dialog(
+          child: EditProfile(dialogCtx: dialogCtx, onSuccess: closeDialog),
+        ),
+      );
+    }
+
+    void editPassword() {
+      showDialog(
+        context: context,
+        builder: (dialogCtx) => Dialog(
+          child: EditPassword(dialogCtx: dialogCtx, onSuccess: closeDialog),
+        ),
+      );
+    }
+
     return Observer(
       builder: (_) {
         final User user = userStore.user?.user;
         final isLogged = user != null;
-
-        void closeDialog() {
-          Navigator.pop(context);
-        }
 
         void onLoginLogout() {
           if (isLogged) {
@@ -44,13 +64,13 @@ class AppDrawer extends StatelessWidget {
         final loggedItems = [
           ListTile(
             title: Text('EDITAR PERFIL'),
-            leading: Icon(Icons.person),
-            onTap: () {},
+            leading: Icon(Icons.edit),
+            onTap: editProfile,
           ),
           ListTile(
             title: Text('EDITAR SENHA'),
             leading: Icon(Icons.security),
-            onTap: () {},
+            onTap: editPassword,
           ),
         ];
 

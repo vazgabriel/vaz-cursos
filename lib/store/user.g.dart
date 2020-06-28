@@ -35,11 +35,22 @@ mixin _$UserStore on UserStoreBase, Store {
       ActionController(name: 'UserStoreBase');
 
   @override
-  void setUser(AuthUser authUser) {
+  void setAuthUser(AuthUser authUser) {
+    final _$actionInfo = _$UserStoreBaseActionController.startAction(
+        name: 'UserStoreBase.setAuthUser');
+    try {
+      return super.setAuthUser(authUser);
+    } finally {
+      _$UserStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void setUser(User user) {
     final _$actionInfo = _$UserStoreBaseActionController.startAction(
         name: 'UserStoreBase.setUser');
     try {
-      return super.setUser(authUser);
+      return super.setUser(user);
     } finally {
       _$UserStoreBaseActionController.endAction(_$actionInfo);
     }
