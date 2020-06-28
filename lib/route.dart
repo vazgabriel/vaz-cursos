@@ -16,6 +16,6 @@ Route<dynamic> generateRoute(RouteSettings settings) {
       );
     case HomeViewRoute:
     default:
-      return MaterialPageRoute(builder: (context) => TabPage());
+      return MaterialPageRoute(builder: (context) => TabPage(routeCtx: context));
   }
 }

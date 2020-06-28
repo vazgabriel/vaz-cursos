@@ -22,7 +22,7 @@ abstract class UserStoreBase with Store {
 
   @action
   Future<void> initUserStore() async {
-    this.user = await this._getUser();
+    this.user = await this.getUser();
   }
 
   @action
@@ -43,21 +43,7 @@ abstract class UserStoreBase with Store {
     this._persistUser();
   }
 
-  void _persistUser() async {
-    if (this.user == null) {
-      await this._preferences.remove(USER_TOKEN_STORAGE);
-      await this._preferences.remove(USER_LOGGED_STORAGE);
-      return;
-    }
-
-    await this._preferences.setString(USER_TOKEN_STORAGE, this.user.token);
-    await this._preferences.setString(
-          USER_LOGGED_STORAGE,
-          jsonEncode(this.user.user.toJson()),
-        );
-  }
-
-  Future<AuthUser> _getUser() async {
+  Future<AuthUser> getUser() async {
     final String token = this._preferences.getString(USER_TOKEN_STORAGE) ?? '';
     final String userLogged =
         this._preferences.getString(USER_LOGGED_STORAGE) ?? '';
@@ -70,5 +56,19 @@ abstract class UserStoreBase with Store {
     }
 
     return null;
+  }
+
+  void _persistUser() async {
+    if (this.user == null) {
+      await this._preferences.remove(USER_TOKEN_STORAGE);
+      await this._preferences.remove(USER_LOGGED_STORAGE);
+      return;
+    }
+
+    await this._preferences.setString(USER_TOKEN_STORAGE, this.user.token);
+    await this._preferences.setString(
+          USER_LOGGED_STORAGE,
+          jsonEncode(this.user.user.toJson()),
+        );
   }
 }

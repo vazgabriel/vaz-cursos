@@ -4,9 +4,11 @@ import 'package:vaz_cursos/components/user_image.dart';
 import 'package:vaz_cursos/models/user.dart';
 
 class ProfileInfo extends StatelessWidget {
-  const ProfileInfo({Key key, @required this.user}) : super(key: key);
+  const ProfileInfo({Key key, @required this.user, this.onRefresh})
+      : super(key: key);
 
   final User user;
+  final Future<void> Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class ProfileInfo extends StatelessWidget {
           leading: leading,
         );
 
-    return ListView(
+    final list = ListView(
       padding: EdgeInsets.all(16),
       children: <Widget>[
         Center(child: UserImage(profileImage: user.profileImage)),
@@ -27,5 +29,9 @@ class ProfileInfo extends StatelessWidget {
         renderProperty(user.email, const Icon(Icons.email)),
       ],
     );
+
+    return this.onRefresh != null
+        ? RefreshIndicator(child: list, onRefresh: onRefresh)
+        : list;
   }
 }
