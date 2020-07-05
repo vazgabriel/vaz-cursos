@@ -5,10 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:vaz_cursos/api.dart';
 import 'package:vaz_cursos/components/loading_button.dart';
 import 'package:vaz_cursos/constants.dart';
+import 'package:vaz_cursos/models/teacher.dart';
 import 'package:vaz_cursos/store/user.dart';
 
-class EditPassword extends StatefulWidget {
-  EditPassword({
+class SaveTeacher extends StatefulWidget {
+  SaveTeacher({
     Key key,
     @required this.dialogCtx,
     this.onSuccess,
@@ -18,16 +19,31 @@ class EditPassword extends StatefulWidget {
   final Function onSuccess;
 
   @override
-  _EditPasswordState createState() => _EditPasswordState();
+  _SaveTeacherState createState() => _SaveTeacherState();
 }
 
-class _EditPasswordState extends State<EditPassword> {
+class _SaveTeacherState extends State<SaveTeacher> {
   final _formKey = GlobalKey<FormState>();
 
-  var _password = '';
-  var _oldPassword = '';
+  var _description = '';
+  var _shortDescription = '';
   var _isLoading = false;
   var _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    final userStore = Provider.of<UserStore>(widget.dialogCtx);
+    final teacher = userStore.user?.user?.teacher;
+
+    if (teacher != null) {
+      setState(() {
+        _description = teacher.description;
+        _shortDescription = teacher.shortDescription;
+      });
+    }
+  }
 
   void _onPressed(UserStore userStore) async {
     if (_formKey.currentState.validate()) {
@@ -37,14 +53,25 @@ class _EditPasswordState extends State<EditPassword> {
       });
 
       try {
-        var options = Options(
+        final options = Options(
           headers: {'Authorization': userStore.user?.token ?? ''},
         );
-        await api.patch(
-          "/user/update-password",
-          data: {'password': _password, 'oldPassword': _oldPassword},
-          options: options,
-        );
+        final data = {
+          'description': _description,
+          'shortDescription': _shortDescription
+        };
+        final response = userStore.user?.user?.teacher != null
+            ? await api.put(
+                "/teacher",
+                data: data,
+                options: options,
+              )
+            : await api.post(
+                "/teacher/request-teacher",
+                data: data,
+                options: options,
+              );
+        userStore.setTeacher(Teacher.fromJson(response.data));
 
         setState(() {
           _isLoading = false;
@@ -74,6 +101,7 @@ class _EditPasswordState extends State<EditPassword> {
   @override
   Widget build(BuildContext context) {
     final userStore = Provider.of<UserStore>(context);
+    final teacher = userStore.user?.user?.teacher;
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -82,33 +110,41 @@ class _EditPasswordState extends State<EditPassword> {
         child: ListView(
           children: <Widget>[
             TextFormField(
-              autocorrect: false,
-              obscureText: true,
+              initialValue: teacher?.shortDescription ?? '',
               onChanged: (value) => setState(() {
-                _oldPassword = value;
+                _shortDescription = value;
               }),
               decoration: const InputDecoration(
-                labelText: 'Antiga Senha',
+                labelText: 'Descrição simples',
+                hintText: 'Essa descrição aparecerá nas páginas de detalhe de curso',
+                errorMaxLines: 3,
               ),
+              maxLength: 150,
+              minLines: 3,
+              maxLines: 4,
               validator: (value) {
-                if (value.isEmpty || value.length < 6) {
-                  return 'A senha deve ter ao menos 6 caracteres';
+                if (value.isEmpty) {
+                  return 'Por favor use uma descrição simples válida';
                 }
                 return null;
               },
             ),
             TextFormField(
-              autocorrect: false,
-              obscureText: true,
+              initialValue: teacher?.description ?? '',
               onChanged: (value) => setState(() {
-                _password = value;
+                _description = value;
               }),
               decoration: const InputDecoration(
-                labelText: 'Nova Senha',
+                labelText: 'Descrição completa',
+                hintText: 'Essa descrição aparecerá no detalhe do seu perfil',
+                errorMaxLines: 3,
               ),
+              maxLength: 1000,
+              minLines: 4,
+              maxLines: 8,
               validator: (value) {
-                if (value.isEmpty || value.length < 6) {
-                  return 'A senha deve ter ao menos 6 caracteres';
+                if (value.isEmpty || value.length < 50) {
+                  return 'Por favor use uma descrição entre 50 e 1000 caracteres';
                 }
                 return null;
               },
@@ -125,7 +161,7 @@ class _EditPasswordState extends State<EditPassword> {
               color: Theme.of(context).primaryColor,
               textColor: Colors.white,
               onPressed: () => _onPressed(userStore),
-              text: 'ATUALIZAR',
+              text: teacher != null ? 'ATUALIZAR' : 'TORNAR-SE PROFESSOR',
               loading: _isLoading,
             ),
           ],

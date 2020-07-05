@@ -1,58 +1,51 @@
 import 'package:flutter/material.dart';
 
-enum ButtonVariant {
-  Default,
-  Full,
-}
-
 class LoadingButton extends StatelessWidget {
   const LoadingButton({
     Key key,
     this.color,
     this.textColor,
     this.loading = false,
-    this.raised = true,
-    @required this.child,
+    @required this.text,
     @required this.onPressed,
-    this.variant = ButtonVariant.Default,
   }) : super(key: key);
 
   final Color color;
   final Color textColor;
   final bool loading;
-  final bool raised;
-  final Widget child;
+  final String text;
   final Function onPressed;
-  final ButtonVariant variant;
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
-      return const Center(
-        child: const Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: const CircularProgressIndicator(),
-        ),
-      );
+    void _onPressed() {
+      if (!loading) {
+        onPressed();
+      }
     }
 
-    final button = raised
-        ? RaisedButton(
-            color: color,
-            textColor: textColor,
-            onPressed: onPressed,
-            child: child)
-        : FlatButton(
-            color: color,
-            textColor: textColor,
-            onPressed: onPressed,
-            child: child);
-
-    return variant == ButtonVariant.Full
-        ? SizedBox(
-            width: double.maxFinite,
-            child: button,
-          )
-        : button;
+    return Center(
+      child: Padding(
+        child: MaterialButton(
+          color: color,
+          textColor: textColor,
+          onPressed: _onPressed,
+          child: loading
+              ? const CircularProgressIndicator(
+                  valueColor: const AlwaysStoppedAnimation(Colors.white),
+                )
+              : Text(
+                  text,
+                  style: const TextStyle(fontSize: 16.0),
+                ),
+          height: 48,
+          minWidth: loading ? 0 : double.infinity,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(48.0)),
+          padding: const EdgeInsets.all(8.0),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+      ),
+    );
   }
 }

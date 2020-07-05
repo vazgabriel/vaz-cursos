@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:vaz_cursos/constants.dart';
 import 'package:vaz_cursos/models/auth_user.dart';
+import 'package:vaz_cursos/models/teacher.dart';
 import 'package:vaz_cursos/models/user.dart';
 
 part 'user.g.dart';
@@ -33,8 +34,20 @@ abstract class UserStoreBase with Store {
 
   @action
   void setUser(User user) {
-    this.user = AuthUser(token: this.user?.token ?? '', user: user);
-    this._persistUser();
+    if (this.user != null) {
+      this.user = AuthUser(token: this.user.token, user: user);
+      this._persistUser();
+    }
+  }
+
+  @action
+  void setTeacher(Teacher teacher) {
+    if (this.user != null) {
+      final user = this.user.user;
+      user.teacher = teacher;
+      this.user = AuthUser(token: this.user.token, user: user);
+      this._persistUser();
+    }
   }
 
   @action

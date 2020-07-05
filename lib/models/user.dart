@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vaz_cursos/models/teacher.dart';
 
 class User {
   int id;
@@ -6,12 +7,7 @@ class User {
   String email;
   String profileImage;
   String createdAt;
-  String shortDescription;
-  String description;
-  double rate;
-  int reviews;
-  int students;
-  int courses;
+  Teacher teacher;
 
   User({
     @required this.id,
@@ -19,12 +15,7 @@ class User {
     @required this.email,
     @required this.createdAt,
     this.profileImage,
-    this.shortDescription,
-    this.description,
-    this.rate,
-    this.reviews,
-    this.students,
-    this.courses,
+    this.teacher,
   });
 
   factory User.fromJson(Map<String, dynamic> userJSON) {
@@ -34,16 +25,25 @@ class User {
       email: userJSON['email'],
       createdAt: userJSON['created_at'],
       profileImage: userJSON['profile_image'],
+      teacher: userJSON.containsKey('teacher')
+          ? Teacher.fromJson(userJSON['teacher'])
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final userJSON = {
       'id': this.id,
       'name': this.name,
       'email': this.email,
       'created_at': this.createdAt,
       'profile_image': this.profileImage,
     };
+
+    if (this.teacher != null) {
+      userJSON['teacher'] = this.teacher.toJson();
+    }
+
+    return userJSON;
   }
 }

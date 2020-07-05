@@ -16,7 +16,7 @@ class AppDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     final userStore = Provider.of<UserStore>(context);
 
-    void closeDialog() {
+    void closeDrawer() {
       Navigator.pop(context);
     }
 
@@ -24,7 +24,7 @@ class AppDrawer extends StatelessWidget {
       showDialog(
         context: context,
         builder: (dialogCtx) => Dialog(
-          child: EditProfile(dialogCtx: dialogCtx, onSuccess: closeDialog),
+          child: EditProfile(dialogCtx: dialogCtx, onSuccess: closeDrawer),
         ),
       );
     }
@@ -33,7 +33,7 @@ class AppDrawer extends StatelessWidget {
       showDialog(
         context: context,
         builder: (dialogCtx) => Dialog(
-          child: EditPassword(dialogCtx: dialogCtx, onSuccess: closeDialog),
+          child: EditPassword(dialogCtx: dialogCtx, onSuccess: closeDrawer),
         ),
       );
     }
@@ -46,7 +46,7 @@ class AppDrawer extends StatelessWidget {
         void onLoginLogout() {
           if (isLogged) {
             userStore.logout();
-            closeDialog();
+            closeDrawer();
             return;
           }
 
@@ -55,7 +55,7 @@ class AppDrawer extends StatelessWidget {
             builder: (dialogCtx) => Dialog(
               child: AuthComponent(
                 dialogCtx: dialogCtx,
-                onLoginSuccess: closeDialog,
+                onLoginSuccess: closeDrawer,
               ),
             ),
           );

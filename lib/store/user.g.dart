@@ -57,6 +57,17 @@ mixin _$UserStore on UserStoreBase, Store {
   }
 
   @override
+  void setTeacher(Teacher teacher) {
+    final _$actionInfo = _$UserStoreBaseActionController.startAction(
+        name: 'UserStoreBase.setTeacher');
+    try {
+      return super.setTeacher(teacher);
+    } finally {
+      _$UserStoreBaseActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   void logout() {
     final _$actionInfo = _$UserStoreBaseActionController.startAction(
         name: 'UserStoreBase.logout');

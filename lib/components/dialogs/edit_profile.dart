@@ -29,18 +29,6 @@ class _EditProfileState extends State<EditProfile> {
   var _isLoading = false;
   var _errorMessage = '';
 
-  void _showMessage(String message) {
-    setState(() {
-      _errorMessage = message;
-    });
-  }
-
-  void _stopLoading() {
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
   void _onPressed(UserStore userStore) async {
     if (_formKey.currentState.validate()) {
       setState(() {
@@ -59,22 +47,27 @@ class _EditProfileState extends State<EditProfile> {
         );
         userStore.setUser(User.fromJson(response.data));
 
-        _stopLoading();
-        _formKey.currentState.reset();
+        setState(() {
+          _isLoading = false;
+        });
 
+        _formKey.currentState.reset();
         widget.onSuccess?.call();
         Navigator.of(widget.dialogCtx).pop();
       } on DioError catch (e) {
-        _stopLoading();
-        if (e.response != null) {
-          String errorMessage = e.response.data['errors'][0]['message'];
-          _showMessage(errorMessage);
-        } else {
-          _showMessage(UNEXPECTED_ERROR);
-        }
+        final responseData = (e?.response?.data ?? {}) as Map<String, dynamic>;
+
+        setState(() {
+          _isLoading = false;
+          _errorMessage = responseData.containsKey('errors')
+              ? responseData['errors'][0]['message']
+              : UNEXPECTED_ERROR;
+        });
       } catch (e) {
-        _stopLoading();
-        _showMessage(UNEXPECTED_ERROR);
+        setState(() {
+          _errorMessage = UNEXPECTED_ERROR;
+          _isLoading = false;
+        });
       }
     }
   }
@@ -117,9 +110,8 @@ class _EditProfileState extends State<EditProfile> {
               color: Theme.of(context).primaryColor,
               textColor: Colors.white,
               onPressed: () => _onPressed(userStore),
-              child: Text('ATUALIZAR'),
+              text: 'ATUALIZAR',
               loading: _isLoading,
-              variant: ButtonVariant.Full,
             ),
           ],
           shrinkWrap: true,

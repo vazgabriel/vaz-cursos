@@ -61,7 +61,7 @@ class ListReviews extends StatelessWidget {
               children: <Widget>[
                 ListTile(
                   title: Text(
-                    '${rates[index].ratedBy.name} (${rates[index].ratedBy.rate})',
+                    '${rates[index].ratedBy.name} (${rates[index].rate})',
                   ),
                   leading: rates[index].ratedBy.profileImage != null
                       ? CachedImage(
